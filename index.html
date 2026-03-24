@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sokol Gora</title>
+  <meta
+    name="description"
+    content="Painting and linguistic research rooted in voice, aperture, and the seven-vowel cosmos."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IM+Fell+English+SC&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #09090b;
+      --panel: #101014;
+      --panel-soft: rgba(255, 255, 255, 0.02);
+      --line: rgba(184, 151, 60, 0.14);
+      --line-strong: rgba(184, 151, 60, 0.3);
+      --gold: #b8973c;
+      --gold-soft: #8a6e2d;
+      --text: #f5f0e8;
+      --muted: #b7afa3;
+      --muted-2: #8c867d;
+      --max: 1280px;
+      --pad: clamp(1.25rem, 3vw, 2rem);
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --caps: "IM Fell English SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      background:
+        radial-gradient(circle at 80% 30%, rgba(184, 151, 60, 0.06), transparent 32%),
+        linear-gradient(180deg, #06070a 0%, #09090b 100%);
+      color: var(--text);
+      font-family: var(--serif);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-shell {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .site-shell::before,
+    .site-shell::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      border: 1px solid rgba(184, 151, 60, 0.08);
+      border-radius: 50%;
+      inset: auto;
+      z-index: 0;
+    }
+
+    .site-shell::before {
+      width: 68rem;
+      height: 68rem;
+      right: -26rem;
+      top: 8rem;
+    }
+
+    .site-shell::after {
+      width: 44rem;
+      height: 44rem;
+      right: -12rem;
+      top: 16rem;
+      border-color: rgba(79, 70, 229, 0.07);
+    }
+
+    .inner {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max), calc(100% - 2 * var(--pad)));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-family: var(--caps);
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      gap: clamp(1rem, 2vw, 2rem);
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      font-family: var(--caps);
+      font-size: 0.86rem;
+      letter-spacing: 0.16em;
+      color: #ddd4c0;
+      opacity: 0.9;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+      color: var(--gold);
+      opacity: 1;
+      outline: none;
+    }
+
+    .hero {
+      min-height: calc(100svh - 5rem);
+      display: grid;
+      align-items: center;
+      padding: clamp(4rem, 10vh, 7rem) 0 4rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 560px) 1fr;
+      gap: clamp(2rem, 7vw, 6rem);
+      align-items: end;
+    }
+
+    .eyebrow {
+      font-family: var(--caps);
+      font-size: 0.92rem;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+      margin: 0 0 1.6rem;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      margin: 0;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      font-weight: 300;
+      font-size: clamp(4rem, 11vw, 7.8rem);
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-title .accent {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-copy {
+      max-width: 28ch;
+      margin: 1.9rem 0 2.6rem;
+      font-size: clamp(1.2rem, 2.1vw, 1.55rem);
+      color: var(--muted);
+    }
+
+    .voice-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .voice-link {
+      width: 1.7rem;
+      height: 1.7rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--voice);
+      font-family: var(--caps);
+      font-size: 0.8rem;
+      line-height: 1;
+      transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .voice-link:hover,
+    .voice-link:focus-visible {
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--voice) 70%, white 30%);
+      background: color-mix(in srgb, var(--voice) 16%, transparent 84%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--voice) 14%, transparent 86%);
+      outline: none;
+    }
+
+    .scroll-note {
+      font-family: var(--caps);
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-left: 0.4rem;
+    }
+
+    .hero-side {
+      min-height: 24rem;
+    }
+
+    section {
+      padding: 4rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .section-kicker {
+      font-family: var(--caps);
+      font-size: 0.86rem;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 300;
+      line-height: 1.1;
+    }
+
+    .section-copy {
+      max-width: 44rem;
+      color: var(--muted);
+      font-size: 1.06rem;
+      margin: 0 0 1.8rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.2rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.015));
+      border: 1px solid rgba(184, 151, 60, 0.12);
+      padding: 1.25rem;
+      min-height: 15rem;
+    }
+
+    .card-label {
+      font-family: var(--caps);
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .card h3 {
+      margin: 0 0 0.65rem;
+      font-size: 2rem;
+      font-weight: 300;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .paper-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .paper {
+      border: 1px solid rgba(184, 151, 60, 0.12);
+      background: rgba(255, 255, 255, 0.018);
+      padding: 1.2rem 1.25rem;
+    }
+
+    .paper-meta {
+      font-family: var(--caps);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.45rem;
+    }
+
+    .paper h3 {
+      margin: 0 0 0.45rem;
+      font-size: 1.7rem;
+      font-weight: 400;
+      line-height: 1.15;
+    }
+
+    .paper p {
+      margin: 0 0 0.8rem;
+      color: var(--muted);
+      max-width: 64ch;
+    }
+
+    .paper a,
+    .contact-links a {
+      color: var(--text);
+      border-bottom: 1px solid rgba(184, 151, 60, 0.25);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .paper a:hover,
+    .paper a:focus-visible,
+    .contact-links a:hover,
+    .contact-links a:focus-visible {
+      color: var(--gold);
+      border-color: rgba(184, 151, 60, 0.7);
+      outline: none;
+    }
+
+    .about-grid,
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.8fr);
+      gap: 2rem;
+    }
+
+    .about-meta,
+    .contact-box {
+      border: 1px solid rgba(184, 151, 60, 0.1);
+      background: rgba(255, 255, 255, 0.015);
+      padding: 1.2rem;
+      align-self: start;
+    }
+
+    .meta-label {
+      font-family: var(--caps);
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.65rem;
+    }
+
+    .meta-value {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .contact-links {
+      display: grid;
+      gap: 0.7rem;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    footer {
+      padding: 2rem 0 3rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted-2);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .cards,
+      .about-grid,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-side {
+        min-height: 6rem;
+      }
+
+      nav {
+        gap: 0.8rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header>
+      <div class="inner topbar">
+        <a class="brand" href="/">Sokol Gora</a>
+        <nav aria-label="Primary">
+          <a href="#gallery">Gallery</a>
+          <a href="#papers">Papers</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero inner" aria-labelledby="hero-title">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">Artist — Researcher — Kosovo / Taiwan</p>
+            <h1 class="hero-title" id="hero-title">
+              <span>Sokol</span>
+              <span class="accent">Gora</span>
+            </h1>
+            <p class="hero-copy">
+              Painting and linguistic research rooted in voice, aperture, and the seven-vowel cosmos.
+            </p>
+            <div class="voice-row">
+              <div id="voice-links" aria-label="Seven voices"></div>
+              <span class="scroll-note">Scroll</span>
+            </div>
+          </div>
+          <div class="hero-side" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section id="gallery">
+        <div class="inner">
+          <div class="section-head">
+            <span class="section-kicker">Gallery</span>
+          </div>
+          <p class="section-copy">
+            A selection of visual work shaped by rhythm, contrast, structure, and symbolic voice.
+          </p>
+          <div class="cards">
+            <article class="card">
+              <div class="card-label">Painting</div>
+              <h3>Seven Voices</h3>
+              <p>
+                Work exploring color, form, and resonance through the structure of the seven vowels.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card-label">Research</div>
+              <h3>ZË-RO</h3>
+              <p>
+                A deterministic instrument for testing vowel-aperture structure and semantic openness.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="papers">
+        <div class="inner">
+          <div class="section-head">
+            <span class="section-kicker">Papers</span>
+          </div>
+          <p class="section-copy">
+            Selected writing around ZË-RO, aperture, and structure in language.
+          </p>
+          <div class="paper-list">
+            <article class="paper">
+              <div class="paper-meta">LingBuzz 009799 · v0.1</div>
+              <h3>ZË-RO v0.1: A Deterministic Orthography Aperture Meter with Baseline-Locked Drift Detection</h3>
+              <p>
+                Baseline report introducing ZË-RO as an aperture-grounding probe with locked validation and drift checks.
+              </p>
+              <a href="https://lingbuzz.net/lingbuzz/009799" target="_blank" rel="noreferrer">LingBuzz</a>
+            </article>
+
+            <article class="paper">
+              <div class="paper-meta">LingBuzz 009808 · v0.2</div>
+              <h3>Albanian200 Morphological Masking &amp; Recovery (Controlled Ablation)</h3>
+              <p>
+                Follow-up note testing masking and recovery behavior inside the Albanian evaluation set.
+              </p>
+              <a href="https://lingbuzz.net/lingbuzz/009808" target="_blank" rel="noreferrer">LingBuzz</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="about">
+        <div class="inner about-grid">
+          <div>
+            <div class="section-head">
+              <span class="section-kicker">About</span>
+            </div>
+            <h2 class="section-title">Art, language, and structure</h2>
+            <p class="section-copy">
+              My work moves between painting and linguistic research. I explore how voice, aperture, rhythm,
+              and symbolic structure can shape both visual form and meaning.
+            </p>
+            <p class="section-copy">
+              Through Udha e Zërave and ZË-RO, I am building a world where vowels are not decorative marks,
+              but living centers of relation, tension, memory, and balance.
+            </p>
+          </div>
+          <aside class="about-meta">
+            <div class="meta-label">Base</div>
+            <div class="meta-value">Taiwan</div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="inner contact-grid">
+          <div>
+            <div class="section-head">
+              <span class="section-kicker">Contact</span>
+            </div>
+            <h2 class="section-title">Get in touch</h2>
+            <p class="section-copy">
+              For exhibitions, writing, collaborations, or research inquiries.
+            </p>
+          </div>
+          <aside class="contact-box">
+            <div class="meta-label">Links</div>
+            <div class="contact-links">
+              <a href="mailto:sokolgora@gmail.com">Email</a>
+              <a href="https://github.com/sokolgora-sketch" target="_blank" rel="noreferrer">GitHub</a>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="inner">© 2026 Sokol Gora</div>
+    </footer>
+  </div>
+
+  <script type="module" src="./home.js"></script>
+</body>
+</html>

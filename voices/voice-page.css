@@ -1,0 +1,106 @@
+:root {
+  --ink: #0d0c0e;
+  --paper: #f5f0e8;
+  --warm: #ede6d5;
+  --gold: #b8973c;
+  --gold-dim: #7a6028;
+  --mist: #9a9490;
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --caps: "IM Fell English SC", serif;
+  --mono: "Courier New", monospace;
+  --gutter: clamp(1.5rem, 5vw, 4rem);
+  --voice-color: var(--gold);
+  --voice-color-dim: color-mix(in srgb, var(--voice-color) 70%, #000 30%);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 18px;
+}
+
+body {
+  min-height: 100svh;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+main {
+  padding: clamp(3.6rem, 10vh, 6rem) var(--gutter) clamp(2.4rem, 8vh, 5rem);
+}
+
+.voice-layout {
+  max-width: 760px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: clamp(2.4rem, 7vh, 4rem);
+  font-family: var(--caps);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(184, 151, 60, 0.22);
+  padding-bottom: 0.15rem;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--gold);
+  border-color: rgba(184, 151, 60, 0.65);
+}
+
+.back-link:focus-visible {
+  outline: 2px solid rgba(184, 151, 60, 0.7);
+  outline-offset: 4px;
+}
+
+.voice-letter {
+  font-family: var(--caps);
+  font-size: clamp(4rem, 14vw, 8rem);
+  line-height: 0.85;
+  color: var(--voice-color);
+  margin-bottom: 1.2rem;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1.1;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+}
+
+.voice-subtitle {
+  color: var(--mist);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  margin-bottom: 2.1rem;
+}
+
+.voice-body {
+  color: var(--warm);
+  max-width: 68ch;
+  margin-bottom: 2.8rem;
+}
+
+.voice-footer {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--voice-color-dim);
+}
+
+.voice-not-found {
+  color: var(--mist);
+}
