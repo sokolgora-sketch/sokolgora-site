@@ -43,9 +43,7 @@
     body {
       margin: 0;
       min-height: 100svh;
-      background:
-        radial-gradient(circle at 80% 30%, rgba(184, 151, 60, 0.06), transparent 32%),
-        linear-gradient(180deg, #06070a 0%, #09090b 100%);
+      background: #06070a;
       color: var(--text);
       font-family: var(--serif);
       font-weight: 300;
@@ -64,28 +62,7 @@
 
     .site-shell::before,
     .site-shell::after {
-      content: "";
-      position: fixed;
-      pointer-events: none;
-      border: 1px solid rgba(184, 151, 60, 0.08);
-      border-radius: 50%;
-      inset: auto;
-      z-index: 0;
-    }
-
-    .site-shell::before {
-      width: 68rem;
-      height: 68rem;
-      right: -26rem;
-      top: 8rem;
-    }
-
-    .site-shell::after {
-      width: 44rem;
-      height: 44rem;
-      right: -12rem;
-      top: 16rem;
-      border-color: rgba(79, 70, 229, 0.07);
+      content: none;
     }
 
     .inner {
@@ -148,8 +125,8 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 560px) 1fr;
-      gap: clamp(2rem, 7vw, 6rem);
+      grid-template-columns: minmax(0, 560px);
+      gap: 0;
       align-items: end;
     }
 
@@ -239,7 +216,7 @@
     }
 
     .hero-side {
-      min-height: 24rem;
+      display: none;
     }
 
     section {
@@ -522,7 +499,7 @@
               <span class="scroll-note">Scroll</span>
             </div>
           </div>
-          <div class="hero-side" aria-hidden="true"></div>
+
         </div>
       </section>
 
