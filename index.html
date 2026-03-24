@@ -194,6 +194,12 @@
       margin-top: 1rem;
     }
 
+    #voice-links {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
     .voice-link {
       width: 1.7rem;
       height: 1.7rem;
@@ -246,7 +252,7 @@
       align-items: baseline;
       justify-content: space-between;
       gap: 1rem;
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
 
     .section-kicker {
@@ -258,7 +264,7 @@
     }
 
     .section-title {
-      margin: 0;
+      margin: 0 0 0.8rem;
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 300;
       line-height: 1.1;
@@ -269,6 +275,71 @@
       color: var(--muted);
       font-size: 1.06rem;
       margin: 0 0 1.8rem;
+    }
+
+    .voice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .voice-card {
+      --voice-accent: var(--gold);
+      border: 1px solid rgba(184, 151, 60, 0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.015));
+      padding: 1.25rem;
+      transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .voice-card:hover,
+    .voice-card:focus-within {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--voice-accent) 38%, rgba(184,151,60,0.24));
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .voice-card-letter {
+      font-family: var(--caps);
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--voice-accent);
+      margin-bottom: 0.65rem;
+    }
+
+    .voice-card-title {
+      margin: 0 0 0.55rem;
+      font-size: 1.7rem;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    .voice-card-copy {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 30ch;
+    }
+
+    .voice-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--caps);
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--voice-accent);
+      border-bottom: 1px solid color-mix(in srgb, var(--voice-accent) 42%, transparent);
+      padding-bottom: 0.1rem;
+    }
+
+    .voice-card-link:hover,
+    .voice-card-link:focus-visible {
+      border-color: color-mix(in srgb, var(--voice-accent) 74%, transparent);
+      outline: none;
     }
 
     .cards {
@@ -401,7 +472,8 @@
       .hero-grid,
       .cards,
       .about-grid,
-      .contact-grid {
+      .contact-grid,
+      .voice-grid {
         grid-template-columns: 1fr;
       }
 
@@ -451,6 +523,19 @@
             </div>
           </div>
           <div class="hero-side" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section id="seven-voices">
+        <div class="inner">
+          <div class="section-head">
+            <span class="section-kicker">Seven Voices</span>
+          </div>
+          <h2 class="section-title">The Seven Voices</h2>
+          <p class="section-copy">
+            The seven vowels are not decorative marks, but a symbolic system of voice, color, relation, and meaning. Each voice carries its own force, rhythm, and direction, and each opens a different way of reading the world.
+          </p>
+          <div class="voice-grid" id="voice-grid"></div>
         </div>
       </section>
 

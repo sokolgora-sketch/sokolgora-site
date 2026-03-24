@@ -4,6 +4,7 @@ export const voices = [
     letter: "A",
     title: "The First Opening",
     subtitle: "A is the first cry of existence.",
+    summary: "The first cry of existence, the beginning that breaks silence.",
     color: "#ef4444",
     footerLabel: "VOICE OF BEGINNING",
     body:
@@ -14,6 +15,7 @@ export const voices = [
     letter: "E",
     title: "Expansion",
     subtitle: "E is the voice that stretches the world outward.",
+    summary: "The force that stretches inner impulse into visible form.",
     color: "#f97316",
     footerLabel: "VOICE OF EXPANSION",
     body:
@@ -24,6 +26,7 @@ export const voices = [
     letter: "I",
     title: "Illumination",
     subtitle: "I is the line of light that brings clarity.",
+    summary: "The line of light that brings clarity, focus, and understanding.",
     color: "#eab308",
     footerLabel: "VOICE OF ILLUMINATION",
     body:
@@ -34,6 +37,7 @@ export const voices = [
     letter: "O",
     title: "The Mediator",
     subtitle: "O is the fourth voice — the center, the circle, the balance.",
+    summary: "The fourth voice, the circle of balance that holds the others together.",
     color: "#22c55e",
     footerLabel: "VOICE OF BALANCE",
     body:
@@ -44,6 +48,7 @@ export const voices = [
     letter: "U",
     title: "Depth",
     subtitle: "U is the voice of depth, support, and living foundation.",
+    summary: "The foundation below form, the quiet support that sustains life.",
     color: "#3b82f6",
     footerLabel: "VOICE OF DEPTH",
     body:
@@ -54,6 +59,7 @@ export const voices = [
     letter: "Y",
     title: "Mystery",
     subtitle: "Y is the voice of choice, mystery, and the road not yet known.",
+    summary: "The threshold of choice, possibility, and the unknown path.",
     color: "#4f46e5",
     footerLabel: "VOICE OF MYSTERY",
     body:
@@ -64,6 +70,7 @@ export const voices = [
     letter: "Ë",
     title: "Return",
     subtitle: "Ë is the voice of tenderness, memory, and sacred return.",
+    summary: "The voice of tenderness, memory, healing, and reconciliation.",
     color: "#c026d3",
     footerLabel: "VOICE OF RETURN",
     body:
