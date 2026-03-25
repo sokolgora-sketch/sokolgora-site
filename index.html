@@ -444,11 +444,166 @@
       cursor: pointer;
     }
 
-    .gallery-publish-panel {
-      margin: 0 0 1rem;
-      padding: 1rem;
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .gallery-card {
+      overflow: hidden;
+      border: 1px solid rgba(184, 151, 60, 0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.015));
+    }
+
+    .gallery-media {
+      aspect-ratio: 4 / 3;
+      width: 100%;
+      border: 0;
+      padding: 0;
+      background: #11141b;
+      border-bottom: 1px solid rgba(184, 151, 60, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      background: #11141b;
+    }
+
+    .gallery-placeholder {
+      color: var(--muted-2);
+      font-family: var(--caps);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gallery-body {
+      padding: 1rem 1.1rem 1.15rem;
+    }
+
+    .gallery-title {
+      margin: 0 0 0.45rem;
+      font-size: 1.95rem;
+      font-weight: 400;
+      line-height: 1.08;
+    }
+
+    .gallery-details {
+      margin: 0 0 0.75rem;
+      color: var(--gold);
+      font-family: var(--caps);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gallery-series {
+      margin: 0 0 0.55rem;
+      color: var(--muted-2);
+      font-family: var(--caps);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gallery-description {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .gallery-source-line {
+      margin: 0.85rem 0 0;
+      color: var(--muted-2);
+      font-family: var(--caps);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gallery-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding-top: 0.95rem;
+      border-top: 1px solid rgba(184, 151, 60, 0.1);
+    }
+
+    .gallery-action-link,
+    .gallery-action-btn {
+      border: 1px solid rgba(184, 151, 60, 0.16);
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--caps);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.7rem 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gallery-action-link:hover,
+    .gallery-action-link:focus-visible,
+    .gallery-action-btn:hover,
+    .gallery-action-btn:focus-visible {
+      border-color: rgba(184, 151, 60, 0.32);
+      color: var(--text);
+      outline: none;
+    }
+
+    .gallery-action-link.is-primary {
+      background: var(--gold);
+      color: #0d0f14;
+      border-color: rgba(184, 151, 60, 0.32);
+    }
+
+    .gallery-action-btn.is-soft {
+      color: var(--muted-2);
+    }
+
+    .gallery-empty {
+      margin-top: 1rem;
+      color: var(--muted);
+    }
+
+    .gallery-publish-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      background: rgba(8, 10, 14, 0.82);
+    }
+
+    .gallery-publish-shell {
+      width: min(1080px, 100%);
+      max-height: calc(100svh - 3rem);
+      overflow: auto;
       border: 1px solid rgba(184, 151, 60, 0.14);
-      background: rgba(255, 255, 255, 0.02);
+      background: #11141b;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    .gallery-publish-panel {
+      margin: 0;
+      padding: 1rem;
+      border: 0;
+      background: transparent;
     }
 
     .gallery-publish-head {
@@ -568,109 +723,6 @@
       color: var(--muted);
     }
 
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-
-    .gallery-card {
-      overflow: hidden;
-      border: 1px solid rgba(184, 151, 60, 0.12);
-      background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.015));
-    }
-
-    .gallery-media {
-      aspect-ratio: 4 / 3;
-      width: 100%;
-      border: 0;
-      padding: 0;
-      background: #11141b;
-      border-bottom: 1px solid rgba(184, 151, 60, 0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      cursor: zoom-in;
-    }
-
-    .gallery-image {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      display: block;
-      background: #11141b;
-    }
-
-    .gallery-placeholder {
-      color: var(--muted-2);
-      font-family: var(--caps);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .gallery-body {
-      padding: 1rem 1.1rem 1.15rem;
-    }
-
-    .gallery-title {
-      margin: 0 0 0.45rem;
-      font-size: 1.95rem;
-      font-weight: 400;
-      line-height: 1.08;
-    }
-
-    .gallery-details {
-      margin: 0 0 0.75rem;
-      color: var(--gold);
-      font-family: var(--caps);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .gallery-description {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .gallery-source-line {
-      margin: 0.85rem 0 0;
-      color: var(--muted-2);
-      font-family: var(--caps);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .gallery-card-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 1rem;
-      padding-top: 0.95rem;
-      border-top: 1px solid rgba(184, 151, 60, 0.1);
-    }
-
-    .gallery-action-link,
-    .gallery-action-btn {
-      border: 1px solid rgba(184, 151, 60, 0.16);
-      background: transparent;
-      color: var(--muted);
-      font-family: var(--caps);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.7rem 0.95rem;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
     .gallery-lightbox {
       position: fixed;
       inset: 0;
@@ -754,30 +806,6 @@
       transition: transform 0.08s ease-out;
       user-select: none;
       -webkit-user-drag: none;
-    }
-
-    .gallery-action-link:hover,
-    .gallery-action-link:focus-visible,
-    .gallery-action-btn:hover,
-    .gallery-action-btn:focus-visible {
-      border-color: rgba(184, 151, 60, 0.32);
-      color: var(--text);
-      outline: none;
-    }
-
-    .gallery-action-link.is-primary {
-      background: var(--gold);
-      color: #0d0f14;
-      border-color: rgba(184, 151, 60, 0.32);
-    }
-
-    .gallery-action-btn.is-soft {
-      color: var(--muted-2);
-    }
-
-    .gallery-empty {
-      margin-top: 1rem;
-      color: var(--muted);
     }
 
     .paper-list {
@@ -1016,80 +1044,94 @@
               id="open-publish-panel"
               type="button"
               aria-expanded="false"
-              aria-controls="gallery-publish-panel"
+              aria-controls="gallery-publish-modal"
             >
               + Publish Painting
             </button>
           </div>
 
-          <section class="gallery-publish-panel" id="gallery-publish-panel" hidden aria-labelledby="publish-painting-title">
-            <div class="gallery-publish-head">
-              <div>
-                <p class="gallery-panel-kicker">Author Tool</p>
-                <h3 id="publish-painting-title">Publish Painting</h3>
-              </div>
-              <div class="gallery-publish-actions">
-                <button class="gallery-ghost-btn" id="export-local-gallery" type="button">Copy local JSON</button>
-                <button class="gallery-ghost-btn" id="close-publish-panel" type="button">Close</button>
-              </div>
-            </div>
-
-            <p class="gallery-panel-note">
-              This adds works to <em>My Gallery</em> in this browser and lets you prepare entries before syncing them into the site.
-            </p>
-
-            <form class="gallery-form" id="gallery-publish-form">
-              <div class="gallery-field-grid">
-                <label class="gallery-field">
-                  <span>Title</span>
-                  <input name="title" type="text" required />
-                </label>
-
-                <label class="gallery-field">
-                  <span>Year</span>
-                  <input name="year" type="text" required placeholder="2026" />
-                </label>
-
-                <label class="gallery-field">
-                  <span>Type</span>
-                  <input name="type" type="text" required placeholder="Painting" />
-                </label>
-
-                <label class="gallery-field">
-                  <span>Medium</span>
-                  <input name="medium" type="text" placeholder="Oil on canvas" />
-                </label>
-
-                <label class="gallery-field">
-                  <span>Image filename</span>
-                  <input id="gallery-image-filename" name="imageFilename" type="text" placeholder="my-painting.jpg" />
-                </label>
-
-                <label class="gallery-field">
-                  <span>Image URL</span>
-                  <input name="imageUrl" type="url" placeholder="https://example.com/painting.jpg" />
-                </label>
-
-                <label class="gallery-field gallery-field-wide">
-                  <span>Description (optional)</span>
-                  <textarea name="description" rows="4" placeholder="Add a short description if you want."></textarea>
-                </label>
-
-                <label class="gallery-field gallery-field-wide">
-                  <span>Image file (local preview)</span>
-                  <input id="gallery-image-file" name="imageFile" type="file" accept="image/*" />
-                </label>
-              </div>
-
-              <div class="gallery-form-actions">
-                <button class="gallery-submit-btn" type="submit">Add to My Gallery</button>
-                <p class="gallery-form-status" id="gallery-publish-status" aria-live="polite"></p>
-              </div>
-            </form>
-          </section>
-
           <div class="gallery-grid" id="gallery-grid"></div>
           <p class="gallery-empty" id="gallery-empty" hidden>No paintings yet. Use “Publish Painting” to add your first work.</p>
+        </div>
+
+        <div class="gallery-publish-modal" id="gallery-publish-modal" hidden>
+          <div class="gallery-publish-shell">
+            <section class="gallery-publish-panel" aria-labelledby="publish-painting-title">
+              <div class="gallery-publish-head">
+                <div>
+                  <p class="gallery-panel-kicker">Author Tool</p>
+                  <h3 id="publish-painting-title">Publish Painting</h3>
+                </div>
+                <div class="gallery-publish-actions">
+                  <button class="gallery-ghost-btn" id="export-local-gallery" type="button">Copy local JSON</button>
+                  <button class="gallery-ghost-btn" id="close-publish-panel" type="button">Close</button>
+                </div>
+              </div>
+
+              <p class="gallery-panel-note">
+                This adds works to <em>My Gallery</em> in this browser and lets you prepare entries before syncing them into the site.
+              </p>
+
+              <form class="gallery-form" id="gallery-publish-form">
+                <div class="gallery-field-grid">
+                  <label class="gallery-field">
+                    <span>Title</span>
+                    <input name="title" type="text" required />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Year</span>
+                    <input name="year" type="text" required placeholder="2026" />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Type</span>
+                    <input name="type" type="text" required placeholder="Painting" />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Medium (optional)</span>
+                    <input name="medium" type="text" placeholder="Oil on canvas" />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Dimensions (optional)</span>
+                    <input name="dimensions" type="text" placeholder="80 × 100 cm" />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Series (optional)</span>
+                    <input name="series" type="text" placeholder="Landscapes" />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Image filename (optional)</span>
+                    <input id="gallery-image-filename" name="imageFilename" type="text" placeholder="my-painting.jpg" />
+                  </label>
+
+                  <label class="gallery-field">
+                    <span>Image URL (optional)</span>
+                    <input name="imageUrl" type="url" placeholder="https://example.com/painting.jpg" />
+                  </label>
+
+                  <label class="gallery-field gallery-field-wide">
+                    <span>Description (optional)</span>
+                    <textarea name="description" rows="4" placeholder="Add a short description if you want."></textarea>
+                  </label>
+
+                  <label class="gallery-field gallery-field-wide">
+                    <span>Image file (local preview, optional)</span>
+                    <input id="gallery-image-file" name="imageFile" type="file" accept="image/*" />
+                  </label>
+                </div>
+
+                <div class="gallery-form-actions">
+                  <button class="gallery-submit-btn" type="submit">Add to My Gallery</button>
+                  <p class="gallery-form-status" id="gallery-publish-status" aria-live="polite"></p>
+                </div>
+              </form>
+            </section>
+          </div>
         </div>
 
         <div class="gallery-lightbox" id="gallery-lightbox" hidden>
@@ -1106,7 +1148,7 @@
                 <button class="gallery-lightbox-close" id="gallery-lightbox-close" type="button">Close</button>
               </div>
             </div>
-            <div class="gallery-lightbox-stage">
+            <div class="gallery-lightbox-stage" id="gallery-lightbox-stage">
               <img class="gallery-lightbox-image" id="gallery-lightbox-image" alt="" />
             </div>
           </div>

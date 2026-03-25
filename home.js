@@ -16,7 +16,7 @@ const openPublishButton = document.getElementById("open-publish-panel");
 const closePublishButton = document.getElementById("close-publish-panel");
 const exportLocalButton = document.getElementById("export-local-gallery");
 
-const publishPanel = document.getElementById("gallery-publish-panel");
+const publishModal = document.getElementById("gallery-publish-modal");
 const publishForm = document.getElementById("gallery-publish-form");
 const publishStatus = document.getElementById("gallery-publish-status");
 const imageFilenameInput = document.getElementById("gallery-image-filename");
@@ -85,6 +85,13 @@ function fileToDataUrl(file) {
 
 function getAllGalleryItems() {
   const localItems = readLocalGallery().map((item) => ({
+    medium: "",
+    dimensions: "",
+    series: "",
+    description: "",
+    imageFilename: "",
+    imageUrl: "",
+    imageDataUrl: "",
     ...item,
     _source: "local",
   }));
@@ -92,6 +99,8 @@ function getAllGalleryItems() {
   const publishedItems = galleryItems.map((item, index) => ({
     id: item.id || `published-${index + 1}`,
     medium: "",
+    dimensions: "",
+    series: "",
     description: "",
     imageFilename: "",
     imageUrl: "",
@@ -116,6 +125,8 @@ function getVisibleGalleryItems() {
       item.year,
       item.type,
       item.medium,
+      item.dimensions,
+      item.series,
       item.description,
       item.imageFilename,
       item.imageUrl,
@@ -177,7 +188,7 @@ function openLightbox(item) {
   lightboxImage.src = imageSrc;
   lightboxImage.alt = `${item.title} (${item.year})`;
   lightboxTitle.textContent = item.title || "";
-  lightboxMeta.textContent = [item.medium, item.year, item.type].filter(Boolean).join(" · ");
+  lightboxMeta.textContent = [item.medium, item.dimensions, item.year, item.type].filter(Boolean).join(" · ");
   lightbox.hidden = false;
   document.body.style.overflow = "hidden";
   resetLightboxZoom();
@@ -187,13 +198,38 @@ function closeLightbox() {
   if (!lightbox || !lightboxImage) return;
   lightbox.hidden = true;
   lightboxImage.src = "";
-  document.body.style.overflow = "";
+  if (publishModal?.hidden !== false) {
+    document.body.style.overflow = "";
+  }
   resetLightboxZoom();
+}
+
+function openPublishModal() {
+  if (!publishModal || !openPublishButton) return;
+  publishModal.hidden = false;
+  openPublishButton.setAttribute("aria-expanded", "true");
+  document.body.style.overflow = "hidden";
+}
+
+function closePublishModal() {
+  if (!publishModal || !openPublishButton) return;
+  publishModal.hidden = true;
+  openPublishButton.setAttribute("aria-expanded", "false");
+  if (lightbox?.hidden !== false) {
+    document.body.style.overflow = "";
+  }
+}
+
+function setActiveFilterButton() {
+  galleryFilterButtons.forEach((button) => {
+    const active = button.dataset.galleryFilter === galleryFilter;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
 }
 
 function renderVoiceLinks() {
   if (!circleHost) return;
-
   circleHost.innerHTML = "";
 
   voices.forEach((voice) => {
@@ -210,7 +246,6 @@ function renderVoiceLinks() {
 
 function renderVoiceGrid() {
   if (!voiceGridHost) return;
-
   voiceGridHost.innerHTML = "";
 
   voices.forEach((voice) => {
@@ -257,14 +292,14 @@ function buildGalleryCard(item) {
 
   media.addEventListener("click", () => openLightbox(item));
 
-  const metaParts = [item.medium, item.year, item.type].filter(Boolean);
-  const metaLine = metaParts.join(" · ");
+  const metaLine = [item.medium, item.dimensions, item.year, item.type].filter(Boolean).join(" · ");
 
   const body = document.createElement("div");
   body.className = "gallery-body";
   body.innerHTML = `
     <h3 class="gallery-title">${escapeHtml(item.title)}</h3>
     ${metaLine ? `<p class="gallery-details">${escapeHtml(metaLine)}</p>` : ""}
+    ${item.series ? `<p class="gallery-series">Series: ${escapeHtml(item.series)}</p>` : ""}
     ${item.description ? `<p class="gallery-description">${escapeHtml(item.description)}</p>` : ""}
     ${item._source === "local" ? `<p class="gallery-source-line">My Gallery</p>` : ""}
   `;
@@ -318,7 +353,6 @@ function renderGallery() {
   if (!galleryGridHost || !galleryEmptyHost) return;
 
   const items = getVisibleGalleryItems();
-
   galleryGridHost.innerHTML = "";
 
   if (items.length === 0) {
@@ -327,30 +361,7 @@ function renderGallery() {
   }
 
   galleryEmptyHost.hidden = true;
-
-  items.forEach((item) => {
-    galleryGridHost.appendChild(buildGalleryCard(item));
-  });
-}
-
-function openPublishPanel() {
-  if (!publishPanel || !openPublishButton) return;
-  publishPanel.hidden = false;
-  openPublishButton.setAttribute("aria-expanded", "true");
-}
-
-function closePublishPanel() {
-  if (!publishPanel || !openPublishButton) return;
-  publishPanel.hidden = true;
-  openPublishButton.setAttribute("aria-expanded", "false");
-}
-
-function setActiveFilterButton() {
-  galleryFilterButtons.forEach((button) => {
-    const active = button.dataset.galleryFilter === galleryFilter;
-    button.classList.toggle("is-active", active);
-    button.setAttribute("aria-pressed", active ? "true" : "false");
-  });
+  items.forEach((item) => galleryGridHost.appendChild(buildGalleryCard(item)));
 }
 
 async function handlePublishSubmit(event) {
@@ -362,6 +373,8 @@ async function handlePublishSubmit(event) {
   const year = String(formData.get("year") || "").trim();
   const type = String(formData.get("type") || "").trim();
   const medium = String(formData.get("medium") || "").trim();
+  const dimensions = String(formData.get("dimensions") || "").trim();
+  const series = String(formData.get("series") || "").trim();
   const description = String(formData.get("description") || "").trim();
   const imageUrl = String(formData.get("imageUrl") || "").trim();
 
@@ -385,6 +398,8 @@ async function handlePublishSubmit(event) {
     year,
     type,
     medium,
+    dimensions,
+    series,
     description,
     imageFilename,
     imageUrl,
@@ -400,6 +415,7 @@ async function handlePublishSubmit(event) {
   galleryFilter = "mine";
   setActiveFilterButton();
   renderGallery();
+  closePublishModal();
 }
 
 function exportLocalGallery() {
@@ -417,6 +433,8 @@ function exportLocalGallery() {
   year: ${JSON.stringify(item.year)},
   type: ${JSON.stringify(item.type)},
   medium: ${JSON.stringify(item.medium || "")},
+  dimensions: ${JSON.stringify(item.dimensions || "")},
+  series: ${JSON.stringify(item.series || "")},
   description: ${JSON.stringify(item.description || "")},
   imageFilename: ${JSON.stringify(item.imageFilename || "")},
   imageUrl: ${JSON.stringify(item.imageUrl || "")}
@@ -424,8 +442,7 @@ function exportLocalGallery() {
     })
     .join(",\n\n");
 
-  navigator.clipboard
-    .writeText(snippet)
+  navigator.clipboard.writeText(snippet)
     .then(() => {
       if (publishStatus) publishStatus.textContent = "Local gallery JSON copied.";
     })
@@ -468,8 +485,8 @@ galleryFilterButtons.forEach((button) => {
   });
 });
 
-openPublishButton?.addEventListener("click", openPublishPanel);
-closePublishButton?.addEventListener("click", closePublishPanel);
+openPublishButton?.addEventListener("click", openPublishModal);
+closePublishButton?.addEventListener("click", closePublishModal);
 exportLocalButton?.addEventListener("click", exportLocalGallery);
 publishForm?.addEventListener("submit", handlePublishSubmit);
 
@@ -534,8 +551,17 @@ lightbox?.addEventListener("click", (event) => {
   if (event.target === lightbox) closeLightbox();
 });
 
+publishModal?.addEventListener("click", (event) => {
+  if (event.target === publishModal) closePublishModal();
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && lightbox && !lightbox.hidden) {
     closeLightbox();
+    return;
+  }
+
+  if (event.key === "Escape" && publishModal && !publishModal.hidden) {
+    closePublishModal();
   }
 });
