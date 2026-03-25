@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work | Sokol Gora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=IM+Fell+English+SC&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --panel: #11141b;
+      --line: rgba(184, 151, 60, 0.14);
+      --gold: #caa74b;
+      --text: #f3efe7;
+      --muted: rgba(243, 239, 231, 0.72);
+      --muted-2: rgba(243, 239, 231, 0.48);
+      --caps: "IM Fell English SC", serif;
+      --serif: "Cormorant Garamond", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      font-family: var(--serif);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(13, 15, 20, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .site-header-inner {
+      width: min(1180px, calc(100% - 2rem));
+      margin: 0 auto;
+      min-height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .site-name {
+      font-family: var(--caps);
+      font-size: 0.92rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .back-link {
+      font-family: var(--caps);
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 0.72rem 0.95rem;
+    }
+
+    .work-shell {
+      width: min(1180px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.75fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .work-stage {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 1.25rem;
+      min-height: 60svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .work-image {
+      display: block;
+      width: 100%;
+      max-height: 78svh;
+      object-fit: contain;
+      background: var(--panel);
+    }
+
+    .work-panel {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.015));
+      padding: 1.25rem 1.2rem;
+    }
+
+    .work-kicker {
+      margin: 0 0 0.5rem;
+      font-family: var(--caps);
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .work-title {
+      margin: 0 0 0.5rem;
+      font-size: clamp(2.4rem, 5vw, 4.1rem);
+      font-weight: 400;
+      line-height: 1.02;
+    }
+
+    .work-meta {
+      margin: 0 0 0.9rem;
+      font-family: var(--caps);
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .work-series {
+      margin: 0 0 0.8rem;
+      font-family: var(--caps);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .work-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 48ch;
+    }
+
+    .work-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(184, 151, 60, 0.1);
+    }
+
+    .work-btn {
+      border: 1px solid rgba(184, 151, 60, 0.18);
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--caps);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.72rem 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .work-btn.is-primary {
+      background: var(--gold);
+      color: #0d0f14;
+      border-color: rgba(184, 151, 60, 0.3);
+    }
+
+    .work-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.5rem;
+    }
+
+    .work-nav a {
+      border: 1px solid rgba(184, 151, 60, 0.14);
+      padding: 0.72rem 0.95rem;
+      font-family: var(--caps);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .work-empty {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 2rem 1.2rem;
+    }
+
+    .work-empty h1 {
+      margin: 0 0 0.7rem;
+      font-size: 2.4rem;
+      font-weight: 400;
+    }
+
+    .work-empty p {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .work-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .work-stage {
+        min-height: auto;
+      }
+
+      .work-image {
+        max-height: 60svh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="site-name" href="../">Sokol Gora</a>
+      <a class="back-link" href="../#gallery">Back to Gallery</a>
+    </div>
+  </header>
+
+  <main class="work-shell">
+    <section class="work-grid" id="work-page" hidden>
+      <figure class="work-stage">
+        <img class="work-image" id="work-image" alt="" />
+      </figure>
+
+      <aside class="work-panel">
+        <p class="work-kicker" id="work-kicker">Artwork</p>
+        <h1 class="work-title" id="work-title"></h1>
+        <p class="work-meta" id="work-meta"></p>
+        <p class="work-series" id="work-series" hidden></p>
+        <p class="work-description" id="work-description" hidden></p>
+
+        <div class="work-actions">
+          <a class="work-btn is-primary" id="work-open-image" href="#" target="_blank" rel="noreferrer">Open Image</a>
+          <a class="work-btn" id="work-dialogue" href="#">Dialogue</a>
+          <button class="work-btn" id="work-share" type="button">Share</button>
+        </div>
+
+        <nav class="work-nav">
+          <a id="work-prev" href="#" hidden>Previous Work</a>
+          <a id="work-next" href="#" hidden>Next Work</a>
+        </nav>
+      </aside>
+    </section>
+
+    <section class="work-empty" id="work-empty" hidden>
+      <h1>Work not found</h1>
+      <p>This artwork could not be found on this device. Local author-only works only exist in the browser where they were created until you sync them into the site files.</p>
+      <a class="work-btn is-primary" href="../#gallery">Return to Gallery</a>
+    </section>
+  </main>
+
+  <script type="module" src="./work.js"></script>
+</body>
+</html>
