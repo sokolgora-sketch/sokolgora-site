@@ -394,6 +394,46 @@
       max-width: 64ch;
     }
 
+    .paper-subtitle {
+      margin: 0 0 0.5rem;
+      color: var(--text);
+      font-size: 1rem;
+      font-style: italic;
+      opacity: 0.9;
+    }
+
+    .paper-why {
+      color: var(--muted);
+      margin-bottom: 0.95rem;
+    }
+
+    .paper-why strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .paper-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin: 0 0 1rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .paper-tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(184, 151, 60, 0.18);
+      background: rgba(255, 255, 255, 0.025);
+      color: var(--muted);
+      padding: 0.22rem 0.55rem;
+      font-family: var(--caps);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
     .paper a,
     .contact-links a {
       color: var(--text);
@@ -556,26 +596,47 @@
           <div class="section-head">
             <span class="section-kicker">Papers</span>
           </div>
+          <h2 class="section-title">Selected research papers</h2>
           <p class="section-copy">
-            Selected writing around ZË-RO, aperture, and structure in language.
+            Published notes and baseline reports around ZË-RO, aperture structure, controlled evaluation, and Albanian linguistic signal.
           </p>
           <div class="paper-list">
             <article class="paper">
               <div class="paper-meta">LingBuzz 009799 · v0.1</div>
               <h3>ZË-RO v0.1: A Deterministic Orthography Aperture Meter with Baseline-Locked Drift Detection</h3>
+              <p class="paper-subtitle">Instrument baseline report</p>
               <p>
                 Baseline report introducing ZË-RO as an aperture-grounding probe with locked validation and drift checks.
               </p>
-              <a href="https://lingbuzz.net/lingbuzz/009799" target="_blank" rel="noreferrer">LingBuzz</a>
+              <p class="paper-why">
+                <strong>Why it matters:</strong> Establishes ZË-RO as a controlled evaluation instrument rather than a loose interpretive framework.
+              </p>
+              <ul class="paper-tags" aria-label="Paper tags">
+                <li class="paper-tag">Aperture</li>
+                <li class="paper-tag">Evaluation</li>
+                <li class="paper-tag">Semantic Grounding</li>
+                <li class="paper-tag">ZË-RO</li>
+              </ul>
+              <a href="https://lingbuzz.net/lingbuzz/009799" target="_blank" rel="noreferrer">Read on LingBuzz</a>
             </article>
 
             <article class="paper">
               <div class="paper-meta">LingBuzz 009808 · v0.2</div>
               <h3>Albanian200 Morphological Masking &amp; Recovery (Controlled Ablation)</h3>
+              <p class="paper-subtitle">Controlled ablation note</p>
               <p>
                 Follow-up note testing masking and recovery behavior inside the Albanian evaluation set.
               </p>
-              <a href="https://lingbuzz.net/lingbuzz/009808" target="_blank" rel="noreferrer">LingBuzz</a>
+              <p class="paper-why">
+                <strong>Why it matters:</strong> Tests whether structural signal survives masking and recovery pressure inside a constrained Albanian benchmark.
+              </p>
+              <ul class="paper-tags" aria-label="Paper tags">
+                <li class="paper-tag">Albanian</li>
+                <li class="paper-tag">Ablation</li>
+                <li class="paper-tag">Morphology</li>
+                <li class="paper-tag">ZË-RO</li>
+              </ul>
+              <a href="https://lingbuzz.net/lingbuzz/009808" target="_blank" rel="noreferrer">Read on LingBuzz</a>
             </article>
           </div>
         </div>
