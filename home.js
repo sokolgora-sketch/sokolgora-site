@@ -24,7 +24,7 @@ const publishModal = document.getElementById("gallery-publish-modal");
 const publishForm = document.getElementById("gallery-publish-form");
 const publishStatus = document.getElementById("gallery-publish-status");
 const publishPanelTitle = document.getElementById("publish-painting-title");
-const publishSubmitButton = publishForm?.querySelector('button[type="submit"]');
+const publishSubmitButton = document.querySelector("#gallery-publish-form .gallery-submit-btn");
 const imageFilenameInput = document.getElementById("gallery-image-filename");
 const imageFileInput = document.getElementById("gallery-image-file");
 
@@ -75,47 +75,6 @@ function normalizeSeries(value) {
 
 function persistAdminMode() {
   localStorage.setItem(ADMIN_MODE_KEY, adminMode ? "1" : "0");
-}
-
-function setPublishModeCreate() {
-  editingLocalId = null;
-  publishForm?.reset();
-  if (publishPanelTitle) publishPanelTitle.textContent = "Publish Painting";
-  if (publishSubmitButton) publishSubmitButton.textContent = "Add to My Gallery";
-  if (publishStatus) publishStatus.textContent = "";
-}
-
-function setFormValue(name, value) {
-  const field = publishForm?.elements?.namedItem(name);
-  if (field && "value" in field) {
-    field.value = value || "";
-  }
-}
-
-function openEditLocalItem(id) {
-  const item = readLocalGallery().find((entry) => entry.id === id);
-  if (!item || !publishModal) return;
-
-  editingLocalId = id;
-  if (publishPanelTitle) publishPanelTitle.textContent = "Edit Painting";
-  if (publishSubmitButton) publishSubmitButton.textContent = "Save Changes";
-  if (publishStatus) publishStatus.textContent = "";
-
-  setFormValue("title", item.title);
-  setFormValue("year", item.year);
-  setFormValue("type", item.type);
-  setFormValue("medium", item.medium);
-  setFormValue("dimensions", item.dimensions);
-  setFormValue("series", item.series);
-  setFormValue("description", item.description);
-  setFormValue("imageFilename", item.imageFilename);
-  setFormValue("imageUrl", item.imageUrl);
-
-  if (imageFileInput) imageFileInput.value = "";
-
-  publishModal.hidden = false;
-  openPublishButton?.setAttribute("aria-expanded", "true");
-  document.body.style.overflow = "hidden";
 }
 
 function readLocalGallery() {
@@ -226,10 +185,16 @@ function getCardId(item) {
   return `gallery-${base}`;
 }
 
+function getWorkId(item) {
+  return `${item._source}:${item.id}`;
+}
+
+function getWorkHref(item) {
+  return `./work/?work=${encodeURIComponent(getWorkId(item))}`;
+}
+
 function buildShareUrl(item) {
-  const url = new URL(window.location.href);
-  url.hash = getCardId(item);
-  return url.toString();
+  return new URL(getWorkHref(item), window.location.href.split("#")[0]).toString();
 }
 
 function applyLightboxTransform() {
@@ -275,6 +240,47 @@ function closeLightbox() {
     document.body.style.overflow = "";
   }
   resetLightboxZoom();
+}
+
+function setPublishModeCreate() {
+  editingLocalId = null;
+  publishForm?.reset();
+  if (publishPanelTitle) publishPanelTitle.textContent = "Publish Painting";
+  if (publishSubmitButton) publishSubmitButton.textContent = "Add to My Gallery";
+  if (publishStatus) publishStatus.textContent = "";
+}
+
+function setFormValue(name, value) {
+  const field = publishForm?.elements?.namedItem(name);
+  if (field && "value" in field) {
+    field.value = value || "";
+  }
+}
+
+function openEditLocalItem(id) {
+  const item = readLocalGallery().find((entry) => entry.id === id);
+  if (!item || !publishModal) return;
+
+  editingLocalId = id;
+  if (publishPanelTitle) publishPanelTitle.textContent = "Edit Painting";
+  if (publishSubmitButton) publishSubmitButton.textContent = "Save Changes";
+  if (publishStatus) publishStatus.textContent = "";
+
+  setFormValue("title", item.title);
+  setFormValue("year", item.year);
+  setFormValue("type", item.type);
+  setFormValue("medium", item.medium);
+  setFormValue("dimensions", item.dimensions);
+  setFormValue("series", item.series);
+  setFormValue("description", item.description);
+  setFormValue("imageFilename", item.imageFilename);
+  setFormValue("imageUrl", item.imageUrl);
+
+  if (imageFileInput) imageFileInput.value = "";
+
+  publishModal.hidden = false;
+  openPublishButton?.setAttribute("aria-expanded", "true");
+  document.body.style.overflow = "hidden";
 }
 
 function openPublishModal() {
@@ -335,10 +341,14 @@ function renderSeriesFilters() {
   const seriesList = getAvailableSeries();
   gallerySeriesHost.innerHTML = "";
 
-  if (seriesList.length === 0) {
+  if (!seriesList.length) {
     gallerySeriesHost.hidden = true;
     gallerySeriesFilter = "";
     return;
+  }
+
+  if (gallerySeriesFilter && !seriesList.includes(gallerySeriesFilter)) {
+    gallerySeriesFilter = "";
   }
 
   gallerySeriesHost.hidden = false;
@@ -414,7 +424,7 @@ function buildGalleryCard(item) {
   const media = document.createElement("button");
   media.className = "gallery-media";
   media.type = "button";
-  media.setAttribute("aria-label", `Open ${item.title}`);
+  media.setAttribute("aria-label", `Quick view ${item.title}`);
 
   const imageSrc = getImageSrc(item);
 
@@ -449,14 +459,11 @@ function buildGalleryCard(item) {
   const actions = document.createElement("div");
   actions.className = "gallery-card-actions";
 
-  if (imageSrc) {
-    const viewButton = document.createElement("button");
-    viewButton.className = "gallery-action-link is-primary";
-    viewButton.type = "button";
-    viewButton.textContent = "View";
-    viewButton.addEventListener("click", () => openLightbox(item));
-    actions.appendChild(viewButton);
-  }
+  const viewLink = document.createElement("a");
+  viewLink.className = "gallery-action-link is-primary";
+  viewLink.href = getWorkHref(item);
+  viewLink.textContent = "View";
+  actions.appendChild(viewLink);
 
   const dialogueLink = document.createElement("a");
   dialogueLink.className = "gallery-action-link";
@@ -520,7 +527,7 @@ function renderGallery() {
   const items = getVisibleGalleryItems();
   galleryGridHost.innerHTML = "";
 
-  if (items.length === 0) {
+  if (!items.length) {
     galleryEmptyHost.hidden = false;
     galleryEmptyHost.textContent = adminMode
       ? 'No paintings yet. Use “Publish Painting” to add your first work.'
@@ -586,10 +593,10 @@ async function handlePublishSubmit(event) {
   if (editingLocalId && existingItem) {
     const index = items.findIndex((entry) => entry.id === editingLocalId);
     if (index !== -1) items[index] = nextItem;
-    if (publishStatus) publishStatus.textContent = "Painting updated.";
+    publishStatus.textContent = "Painting updated.";
   } else {
     items.push(nextItem);
-    if (publishStatus) publishStatus.textContent = "Painting added to My Gallery.";
+    publishStatus.textContent = "Painting added to My Gallery.";
     gallerySourceFilter = "mine";
   }
 
