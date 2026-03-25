@@ -23,6 +23,8 @@ const adminToggleButton = document.getElementById("admin-mode-toggle");
 const publishModal = document.getElementById("gallery-publish-modal");
 const publishForm = document.getElementById("gallery-publish-form");
 const publishStatus = document.getElementById("gallery-publish-status");
+const publishPanelTitle = document.getElementById("publish-painting-title");
+const publishSubmitButton = publishForm?.querySelector('button[type="submit"]');
 const imageFilenameInput = document.getElementById("gallery-image-filename");
 const imageFileInput = document.getElementById("gallery-image-file");
 
@@ -41,6 +43,7 @@ let gallerySourceFilter = "all";
 let gallerySeriesFilter = "";
 
 let adminMode = localStorage.getItem(ADMIN_MODE_KEY) === "1";
+let editingLocalId = null;
 
 let lightboxScale = 1;
 let lightboxX = 0;
@@ -72,6 +75,47 @@ function normalizeSeries(value) {
 
 function persistAdminMode() {
   localStorage.setItem(ADMIN_MODE_KEY, adminMode ? "1" : "0");
+}
+
+function setPublishModeCreate() {
+  editingLocalId = null;
+  publishForm?.reset();
+  if (publishPanelTitle) publishPanelTitle.textContent = "Publish Painting";
+  if (publishSubmitButton) publishSubmitButton.textContent = "Add to My Gallery";
+  if (publishStatus) publishStatus.textContent = "";
+}
+
+function setFormValue(name, value) {
+  const field = publishForm?.elements?.namedItem(name);
+  if (field && "value" in field) {
+    field.value = value || "";
+  }
+}
+
+function openEditLocalItem(id) {
+  const item = readLocalGallery().find((entry) => entry.id === id);
+  if (!item || !publishModal) return;
+
+  editingLocalId = id;
+  if (publishPanelTitle) publishPanelTitle.textContent = "Edit Painting";
+  if (publishSubmitButton) publishSubmitButton.textContent = "Save Changes";
+  if (publishStatus) publishStatus.textContent = "";
+
+  setFormValue("title", item.title);
+  setFormValue("year", item.year);
+  setFormValue("type", item.type);
+  setFormValue("medium", item.medium);
+  setFormValue("dimensions", item.dimensions);
+  setFormValue("series", item.series);
+  setFormValue("description", item.description);
+  setFormValue("imageFilename", item.imageFilename);
+  setFormValue("imageUrl", item.imageUrl);
+
+  if (imageFileInput) imageFileInput.value = "";
+
+  publishModal.hidden = false;
+  openPublishButton?.setAttribute("aria-expanded", "true");
+  document.body.style.overflow = "hidden";
 }
 
 function readLocalGallery() {
@@ -235,6 +279,7 @@ function closeLightbox() {
 
 function openPublishModal() {
   if (!adminMode || !publishModal || !openPublishButton) return;
+  setPublishModeCreate();
   publishModal.hidden = false;
   openPublishButton.setAttribute("aria-expanded", "true");
   document.body.style.overflow = "hidden";
@@ -247,6 +292,7 @@ function closePublishModal() {
   if (lightbox?.hidden !== false) {
     document.body.style.overflow = "";
   }
+  setPublishModeCreate();
 }
 
 function setActiveSourceButtons() {
@@ -430,6 +476,13 @@ function buildGalleryCard(item) {
   actions.appendChild(shareButton);
 
   if (adminMode && item._source === "local") {
+    const editButton = document.createElement("button");
+    editButton.className = "gallery-action-btn";
+    editButton.type = "button";
+    editButton.textContent = "Edit";
+    editButton.setAttribute("data-edit-local-id", item.id);
+    actions.appendChild(editButton);
+
     const upButton = document.createElement("button");
     upButton.className = "gallery-action-btn";
     upButton.type = "button";
@@ -507,8 +560,17 @@ async function handlePublishSubmit(event) {
     return;
   }
 
+  const items = readLocalGallery();
+  const existingItem = editingLocalId
+    ? items.find((entry) => entry.id === editingLocalId)
+    : null;
+
+  if (existingItem && !imageFileInput?.files?.[0]) {
+    imageDataUrl = existingItem.imageDataUrl || "";
+  }
+
   const nextItem = {
-    id: `local-${Date.now()}`,
+    id: editingLocalId || `local-${Date.now()}`,
     title,
     year,
     type,
@@ -521,13 +583,18 @@ async function handlePublishSubmit(event) {
     imageDataUrl,
   };
 
-  const items = readLocalGallery();
-  items.push(nextItem);
+  if (editingLocalId && existingItem) {
+    const index = items.findIndex((entry) => entry.id === editingLocalId);
+    if (index !== -1) items[index] = nextItem;
+    if (publishStatus) publishStatus.textContent = "Painting updated.";
+  } else {
+    items.push(nextItem);
+    if (publishStatus) publishStatus.textContent = "Painting added to My Gallery.";
+    gallerySourceFilter = "mine";
+  }
+
   writeLocalGallery(items);
 
-  publishForm.reset();
-  publishStatus.textContent = "Painting added to My Gallery.";
-  gallerySourceFilter = "mine";
   syncAdminUI();
   renderSeriesFilters();
   renderGallery();
@@ -626,6 +693,13 @@ galleryGridHost?.addEventListener("click", async (event) => {
   const shareButton = event.target.closest("[data-share-url]");
   if (shareButton) {
     await handleShare(shareButton);
+    return;
+  }
+
+  const editButton = event.target.closest("[data-edit-local-id]");
+  if (editButton) {
+    const id = editButton.getAttribute("data-edit-local-id");
+    if (id) openEditLocalItem(id);
     return;
   }
 
