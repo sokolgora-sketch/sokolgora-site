@@ -38,6 +38,7 @@
 
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: 6rem;
       background: #0d0f14;
     }
 
@@ -74,8 +75,14 @@
     }
 
     header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
       padding: 1.25rem 0;
       border-bottom: 1px solid var(--line);
+      background: rgba(13, 15, 20, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .topbar {
@@ -145,7 +152,7 @@
       line-height: 0.88;
       letter-spacing: -0.02em;
       font-weight: 300;
-      font-size: clamp(4rem, 11vw, 7.8rem);
+      font-size: clamp(2.8rem, 7.7vw, 5.5rem);
     }
 
     .hero-title span {
@@ -487,7 +494,7 @@
       <section class="hero inner" aria-labelledby="hero-title">
         <div class="hero-grid">
           <div>
-            <p class="eyebrow">Artist — Researcher — Kosovo / Taiwan</p>
+            <p class="eyebrow">Artist — Researcher</p>
             <h1 class="hero-title" id="hero-title">
               <span>Sokol</span>
               <span class="accent">Gora</span>
@@ -580,19 +587,19 @@
             <div class="section-head">
               <span class="section-kicker">About</span>
             </div>
-            <h2 class="section-title">Art, language, and structure</h2>
+            <h2 class="section-title">Painting, language, and structural inquiry</h2>
             <p class="section-copy">
-              My work moves between painting and linguistic research. I explore how voice, aperture, rhythm,
-              and symbolic structure can shape both visual form and meaning.
+              Sokol Gora is an artist and researcher whose work moves between painting, symbolic language, and structural inquiry. Across visual practice and writing, he explores how voice, aperture, rhythm, and relation shape meaning in both image and language.
             </p>
             <p class="section-copy">
-              Through Udha e Zërave and ZË-RO, I am building a world where vowels are not decorative marks,
-              but living centers of relation, tension, memory, and balance.
+              Two central threads define this work: <em>Udha e Zërave</em>, a mythic and symbolic framework built around the Seven Voices, and ZË-RO, a research instrument for testing vowel-aperture structure and semantic openness. Together, they form a shared investigation into pattern, resonance, and the architecture of meaning.
             </p>
           </div>
           <aside class="about-meta">
             <div class="meta-label">Base</div>
             <div class="meta-value">Taiwan</div>
+            <div class="meta-label" style="margin-top: 1.1rem;">Focus</div>
+            <div class="meta-value">Painting · Seven Voices · ZË-RO</div>
           </aside>
         </div>
       </section>
