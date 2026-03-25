@@ -10,7 +10,9 @@ const voiceGridHost = document.getElementById("voice-grid");
 const galleryGridHost = document.getElementById("gallery-grid");
 const galleryEmptyHost = document.getElementById("gallery-empty");
 const gallerySearchInput = document.getElementById("gallery-search");
-const galleryFilterButtons = Array.from(document.querySelectorAll("[data-gallery-filter]"));
+
+const gallerySourceButtons = Array.from(document.querySelectorAll("[data-gallery-filter]"));
+const gallerySeriesHost = document.getElementById("gallery-series-filters");
 
 const openPublishButton = document.getElementById("open-publish-panel");
 const closePublishButton = document.getElementById("close-publish-panel");
@@ -33,7 +35,8 @@ const lightboxZoomOut = document.getElementById("gallery-zoom-out");
 const lightboxZoomReset = document.getElementById("gallery-zoom-reset");
 
 let galleryQuery = "";
-let galleryFilter = "all";
+let gallerySourceFilter = "all";
+let gallerySeriesFilter = "";
 
 let lightboxScale = 1;
 let lightboxX = 0;
@@ -57,6 +60,10 @@ function slugify(value) {
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function normalizeSeries(value) {
+  return String(value ?? "").trim();
 }
 
 function readLocalGallery() {
@@ -112,11 +119,25 @@ function getAllGalleryItems() {
   return [...localItems, ...publishedItems];
 }
 
+function getAvailableSeries() {
+  const unique = new Set();
+
+  getAllGalleryItems().forEach((item) => {
+    const series = normalizeSeries(item.series);
+    if (series) unique.add(series);
+  });
+
+  return Array.from(unique).sort((a, b) => a.localeCompare(b));
+}
+
 function getVisibleGalleryItems() {
   const q = galleryQuery.trim().toLowerCase();
 
   return getAllGalleryItems().filter((item) => {
-    if (galleryFilter === "mine" && item._source !== "local") return false;
+    if (gallerySourceFilter === "mine" && item._source !== "local") return false;
+
+    const series = normalizeSeries(item.series);
+    if (gallerySeriesFilter && series !== gallerySeriesFilter) return false;
 
     if (!q) return true;
 
@@ -220,11 +241,52 @@ function closePublishModal() {
   }
 }
 
-function setActiveFilterButton() {
-  galleryFilterButtons.forEach((button) => {
-    const active = button.dataset.galleryFilter === galleryFilter;
+function setActiveSourceButtons() {
+  gallerySourceButtons.forEach((button) => {
+    const active = button.dataset.galleryFilter === gallerySourceFilter;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
+
+function renderSeriesFilters() {
+  if (!gallerySeriesHost) return;
+
+  const seriesList = getAvailableSeries();
+  gallerySeriesHost.innerHTML = "";
+
+  if (seriesList.length === 0) {
+    gallerySeriesHost.hidden = true;
+    gallerySeriesFilter = "";
+    return;
+  }
+
+  gallerySeriesHost.hidden = false;
+
+  const allChip = document.createElement("button");
+  allChip.type = "button";
+  allChip.className = `gallery-series-chip ${gallerySeriesFilter === "" ? "is-active" : ""}`;
+  allChip.textContent = "All Series";
+  allChip.setAttribute("aria-pressed", gallerySeriesFilter === "" ? "true" : "false");
+  allChip.addEventListener("click", () => {
+    gallerySeriesFilter = "";
+    renderSeriesFilters();
+    renderGallery();
+  });
+  gallerySeriesHost.appendChild(allChip);
+
+  seriesList.forEach((series) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = `gallery-series-chip ${gallerySeriesFilter === series ? "is-active" : ""}`;
+    chip.textContent = series;
+    chip.setAttribute("aria-pressed", gallerySeriesFilter === series ? "true" : "false");
+    chip.addEventListener("click", () => {
+      gallerySeriesFilter = series;
+      renderSeriesFilters();
+      renderGallery();
+    });
+    gallerySeriesHost.appendChild(chip);
   });
 }
 
@@ -412,8 +474,9 @@ async function handlePublishSubmit(event) {
 
   publishForm.reset();
   publishStatus.textContent = "Painting added to My Gallery.";
-  galleryFilter = "mine";
-  setActiveFilterButton();
+  gallerySourceFilter = "mine";
+  setActiveSourceButtons();
+  renderSeriesFilters();
   renderGallery();
   closePublishModal();
 }
@@ -469,7 +532,8 @@ async function handleShare(button) {
 
 renderVoiceLinks();
 renderVoiceGrid();
-setActiveFilterButton();
+setActiveSourceButtons();
+renderSeriesFilters();
 renderGallery();
 
 gallerySearchInput?.addEventListener("input", (event) => {
@@ -477,10 +541,10 @@ gallerySearchInput?.addEventListener("input", (event) => {
   renderGallery();
 });
 
-galleryFilterButtons.forEach((button) => {
+gallerySourceButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    galleryFilter = button.dataset.galleryFilter || "all";
-    setActiveFilterButton();
+    gallerySourceFilter = button.dataset.galleryFilter || "all";
+    setActiveSourceButtons();
     renderGallery();
   });
 });
@@ -510,6 +574,7 @@ galleryGridHost?.addEventListener("click", async (event) => {
     const next = readLocalGallery().filter((item) => item.id !== id);
     writeLocalGallery(next);
     if (publishStatus) publishStatus.textContent = "Local item removed.";
+    renderSeriesFilters();
     renderGallery();
   }
 });

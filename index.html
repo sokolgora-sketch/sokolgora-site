@@ -444,6 +444,31 @@
       cursor: pointer;
     }
 
+    .gallery-series-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 0 0 1rem;
+    }
+
+    .gallery-series-chip {
+      border: 1px solid rgba(184, 151, 60, 0.14);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--muted);
+      font-family: var(--caps);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+    }
+
+    .gallery-series-chip.is-active {
+      border-color: rgba(184, 151, 60, 0.28);
+      background: rgba(184, 151, 60, 0.12);
+      color: var(--text);
+    }
+
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1049,6 +1074,8 @@
               + Publish Painting
             </button>
           </div>
+
+          <div class="gallery-series-filters" id="gallery-series-filters" hidden></div>
 
           <div class="gallery-grid" id="gallery-grid"></div>
           <p class="gallery-empty" id="gallery-empty" hidden>No paintings yet. Use “Publish Painting” to add your first work.</p>
