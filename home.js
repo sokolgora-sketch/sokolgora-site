@@ -2,6 +2,7 @@ import { voices } from "./content/voices.js";
 import { galleryItems } from "./content/gallery.js";
 
 const LOCAL_GALLERY_KEY = "sokolgora.gallery.local.v1";
+const ADMIN_MODE_KEY = "sokolgora.gallery.adminMode.v1";
 const DIALOGUE_EMAIL = "sokolgora@gmail.com";
 
 const circleHost = document.getElementById("voice-links");
@@ -17,6 +18,7 @@ const gallerySeriesHost = document.getElementById("gallery-series-filters");
 const openPublishButton = document.getElementById("open-publish-panel");
 const closePublishButton = document.getElementById("close-publish-panel");
 const exportLocalButton = document.getElementById("export-local-gallery");
+const adminToggleButton = document.getElementById("admin-mode-toggle");
 
 const publishModal = document.getElementById("gallery-publish-modal");
 const publishForm = document.getElementById("gallery-publish-form");
@@ -37,6 +39,8 @@ const lightboxZoomReset = document.getElementById("gallery-zoom-reset");
 let galleryQuery = "";
 let gallerySourceFilter = "all";
 let gallerySeriesFilter = "";
+
+let adminMode = localStorage.getItem(ADMIN_MODE_KEY) === "1";
 
 let lightboxScale = 1;
 let lightboxX = 0;
@@ -64,6 +68,10 @@ function slugify(value) {
 
 function normalizeSeries(value) {
   return String(value ?? "").trim();
+}
+
+function persistAdminMode() {
+  localStorage.setItem(ADMIN_MODE_KEY, adminMode ? "1" : "0");
 }
 
 function readLocalGallery() {
@@ -226,7 +234,7 @@ function closeLightbox() {
 }
 
 function openPublishModal() {
-  if (!publishModal || !openPublishButton) return;
+  if (!adminMode || !publishModal || !openPublishButton) return;
   publishModal.hidden = false;
   openPublishButton.setAttribute("aria-expanded", "true");
   document.body.style.overflow = "hidden";
@@ -243,10 +251,36 @@ function closePublishModal() {
 
 function setActiveSourceButtons() {
   gallerySourceButtons.forEach((button) => {
-    const active = button.dataset.galleryFilter === gallerySourceFilter;
+    const filter = button.dataset.galleryFilter;
+    const shouldHide = !adminMode && filter === "mine";
+    button.hidden = shouldHide;
+
+    if (!adminMode && gallerySourceFilter === "mine") {
+      gallerySourceFilter = "all";
+    }
+
+    const active = filter === gallerySourceFilter;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
+}
+
+function syncAdminUI() {
+  if (openPublishButton) {
+    openPublishButton.hidden = !adminMode;
+  }
+
+  if (adminToggleButton) {
+    adminToggleButton.textContent = adminMode ? "Admin On" : "Admin Off";
+    adminToggleButton.classList.toggle("is-on", adminMode);
+    adminToggleButton.setAttribute("aria-pressed", adminMode ? "true" : "false");
+  }
+
+  if (!adminMode && publishModal && !publishModal.hidden) {
+    closePublishModal();
+  }
+
+  setActiveSourceButtons();
 }
 
 function renderSeriesFilters() {
@@ -363,7 +397,7 @@ function buildGalleryCard(item) {
     ${metaLine ? `<p class="gallery-details">${escapeHtml(metaLine)}</p>` : ""}
     ${item.series ? `<p class="gallery-series">Series: ${escapeHtml(item.series)}</p>` : ""}
     ${item.description ? `<p class="gallery-description">${escapeHtml(item.description)}</p>` : ""}
-    ${item._source === "local" ? `<p class="gallery-source-line">My Gallery</p>` : ""}
+    ${adminMode && item._source === "local" ? `<p class="gallery-source-line">My Gallery</p>` : ""}
   `;
 
   const actions = document.createElement("div");
@@ -395,7 +429,23 @@ function buildGalleryCard(item) {
   shareButton.setAttribute("data-share-title", item.title);
   actions.appendChild(shareButton);
 
-  if (item._source === "local") {
+  if (adminMode && item._source === "local") {
+    const upButton = document.createElement("button");
+    upButton.className = "gallery-action-btn";
+    upButton.type = "button";
+    upButton.textContent = "Up";
+    upButton.setAttribute("data-move-local-id", item.id);
+    upButton.setAttribute("data-move-direction", "up");
+    actions.appendChild(upButton);
+
+    const downButton = document.createElement("button");
+    downButton.className = "gallery-action-btn";
+    downButton.type = "button";
+    downButton.textContent = "Down";
+    downButton.setAttribute("data-move-local-id", item.id);
+    downButton.setAttribute("data-move-direction", "down");
+    actions.appendChild(downButton);
+
     const deleteButton = document.createElement("button");
     deleteButton.className = "gallery-action-btn is-soft";
     deleteButton.type = "button";
@@ -419,6 +469,9 @@ function renderGallery() {
 
   if (items.length === 0) {
     galleryEmptyHost.hidden = false;
+    galleryEmptyHost.textContent = adminMode
+      ? 'No paintings yet. Use “Publish Painting” to add your first work.'
+      : "No paintings available yet.";
     return;
   }
 
@@ -469,13 +522,13 @@ async function handlePublishSubmit(event) {
   };
 
   const items = readLocalGallery();
-  items.unshift(nextItem);
+  items.push(nextItem);
   writeLocalGallery(items);
 
   publishForm.reset();
   publishStatus.textContent = "Painting added to My Gallery.";
   gallerySourceFilter = "mine";
-  setActiveSourceButtons();
+  syncAdminUI();
   renderSeriesFilters();
   renderGallery();
   closePublishModal();
@@ -532,7 +585,7 @@ async function handleShare(button) {
 
 renderVoiceLinks();
 renderVoiceGrid();
-setActiveSourceButtons();
+syncAdminUI();
 renderSeriesFilters();
 renderGallery();
 
@@ -544,7 +597,7 @@ gallerySearchInput?.addEventListener("input", (event) => {
 gallerySourceButtons.forEach((button) => {
   button.addEventListener("click", () => {
     gallerySourceFilter = button.dataset.galleryFilter || "all";
-    setActiveSourceButtons();
+    syncAdminUI();
     renderGallery();
   });
 });
@@ -553,6 +606,14 @@ openPublishButton?.addEventListener("click", openPublishModal);
 closePublishButton?.addEventListener("click", closePublishModal);
 exportLocalButton?.addEventListener("click", exportLocalGallery);
 publishForm?.addEventListener("submit", handlePublishSubmit);
+
+adminToggleButton?.addEventListener("click", () => {
+  adminMode = !adminMode;
+  persistAdminMode();
+  syncAdminUI();
+  renderSeriesFilters();
+  renderGallery();
+});
 
 imageFileInput?.addEventListener("change", () => {
   const file = imageFileInput.files?.[0];
@@ -565,6 +626,28 @@ galleryGridHost?.addEventListener("click", async (event) => {
   const shareButton = event.target.closest("[data-share-url]");
   if (shareButton) {
     await handleShare(shareButton);
+    return;
+  }
+
+  const moveButton = event.target.closest("[data-move-local-id]");
+  if (moveButton) {
+    const id = moveButton.getAttribute("data-move-local-id");
+    const direction = moveButton.getAttribute("data-move-direction");
+    const items = readLocalGallery();
+    const index = items.findIndex((item) => item.id === id);
+
+    if (index !== -1) {
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex >= 0 && targetIndex < items.length) {
+        const temp = items[index];
+        items[index] = items[targetIndex];
+        items[targetIndex] = temp;
+        writeLocalGallery(items);
+        if (publishStatus) publishStatus.textContent = "Gallery order updated.";
+        renderSeriesFilters();
+        renderGallery();
+      }
+    }
     return;
   }
 

@@ -993,7 +993,38 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+  
+    .admin-toggle-btn {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 95;
+      min-height: 2.7rem;
+      border: 1px solid rgba(184, 151, 60, 0.18);
+      background: rgba(17, 20, 27, 0.92);
+      color: var(--muted);
+      font-family: var(--caps);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.75rem 0.95rem;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .admin-toggle-btn.is-on {
+      background: var(--gold);
+      color: #0d0f14;
+      border-color: rgba(184, 151, 60, 0.32);
+    }
+
+    .admin-toggle-btn:hover,
+    .admin-toggle-btn:focus-visible {
+      border-color: rgba(184, 151, 60, 0.32);
+      outline: none;
+    }
+</style>
 </head>
 <body>
   <div class="site-shell">
@@ -1284,5 +1315,6 @@
   </div>
 
   <script type="module" src="./home.js"></script>
+  <button id="admin-mode-toggle" class="admin-toggle-btn" type="button" aria-pressed="false">Admin Off</button>
 </body>
 </html>
